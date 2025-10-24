@@ -50,6 +50,83 @@ const Navbar: React.FC<NavbarProps> = ({ activePage, setActivePage }) => {
     { page: 'faq', label: 'FAQ' },
   ];
 
+  const renderAuthButtons = () => {
+    if (loading) {
+      return null; // Don't render anything while checking auth status
+    }
+
+    if (session) {
+      // User is logged in
+      return (
+        <>
+          {profile?.role === 'sindico' && activePage !== 'acesso-restrito' && (
+            <button
+                onClick={() => handleNavClick('acesso-restrito')}
+                className="ml-4 px-4 py-2 rounded-md text-sm font-medium bg-accent text-primary hover:bg-accent/80 transition-colors duration-300"
+              >
+                Voltar para Painel
+            </button>
+          )}
+
+          <button
+              onClick={handleSignOut}
+              className="ml-4 px-4 py-2 flex items-center rounded-md text-sm font-medium bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors duration-300"
+            >
+              <LogoutIcon className="w-4 h-4 mr-2" />
+              Sair
+            </button>
+        </>
+      );
+    } else {
+      // User is not logged in
+      return (
+        <button
+            onClick={() => handleNavClick('acesso-restrito')}
+            className="ml-4 px-4 py-2 rounded-md text-sm font-medium bg-accent text-primary hover:bg-accent/80 transition-colors duration-300"
+          >
+            Área Restrita
+        </button>
+      );
+    }
+  };
+
+  const renderMobileAuthButtons = () => {
+    if (loading) {
+      return null;
+    }
+
+    if (session) {
+      return (
+        <>
+          {profile?.role === 'sindico' && activePage !== 'acesso-restrito' && (
+              <button
+                onClick={() => handleNavClick('acesso-restrito')}
+                className="block w-full text-left px-3 py-2 rounded-md text-base font-medium bg-accent text-primary"
+              >
+                Voltar para Painel
+              </button>
+          )}
+
+          <button
+              onClick={handleSignOut}
+              className="block w-full text-left px-3 py-2 rounded-md text-base font-medium bg-red-500/20 text-red-400 hover:bg-red-500/30"
+            >
+              Sair
+            </button>
+        </>
+      );
+    } else {
+      return (
+        <button
+          onClick={() => handleNavClick('acesso-restrito')}
+          className="block w-full text-left px-3 py-2 rounded-md text-base font-medium bg-white/10 text-white/80 hover:bg-white/20 hover:text-white"
+        >
+          Área Restrita
+        </button>
+      );
+    }
+  };
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-primary/80 backdrop-blur-lg border-b border-white/10 shadow-lg">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -65,36 +142,7 @@ const Navbar: React.FC<NavbarProps> = ({ activePage, setActivePage }) => {
                   {item.label}
                 </NavLink>
               ))}
-
-              {!loading && (
-                <>
-                  {session && profile?.role === 'sindico' && activePage !== 'acesso-restrito' && (
-                    <button
-                        onClick={() => handleNavClick('acesso-restrito')}
-                        className="ml-4 px-4 py-2 rounded-md text-sm font-medium bg-accent text-primary hover:bg-accent/80 transition-colors duration-300"
-                      >
-                        Voltar para Painel
-                    </button>
-                  )}
-
-                  {session ? (
-                    <button
-                        onClick={handleSignOut}
-                        className="ml-4 px-4 py-2 flex items-center rounded-md text-sm font-medium bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors duration-300"
-                      >
-                        <LogoutIcon className="w-4 h-4 mr-2" />
-                        Sair
-                      </button>
-                  ) : (
-                    <button
-                        onClick={() => handleNavClick('acesso-restrito')}
-                        className="ml-4 px-4 py-2 rounded-md text-sm font-medium bg-accent text-primary hover:bg-accent/80 transition-colors duration-300"
-                      >
-                        Área Restrita
-                    </button>
-                  )}
-                </>
-              )}
+              {renderAuthButtons()}
             </div>
           </div>
           <div className="-mr-2 flex md:hidden">
@@ -125,35 +173,7 @@ const Navbar: React.FC<NavbarProps> = ({ activePage, setActivePage }) => {
                 {item.label}
               </button>
             ))}
-
-            {!loading && (
-              <>
-                {session && profile?.role === 'sindico' && activePage !== 'acesso-restrito' && (
-                    <button
-                      onClick={() => handleNavClick('acesso-restrito')}
-                      className="block w-full text-left px-3 py-2 rounded-md text-base font-medium bg-accent text-primary"
-                    >
-                      Voltar para Painel
-                    </button>
-                )}
-
-                {session ? (
-                    <button
-                        onClick={handleSignOut}
-                        className="block w-full text-left px-3 py-2 rounded-md text-base font-medium bg-red-500/20 text-red-400 hover:bg-red-500/30"
-                      >
-                        Sair
-                      </button>
-                  ) : (
-                    <button
-                      onClick={() => handleNavClick('acesso-restrito')}
-                      className="block w-full text-left px-3 py-2 rounded-md text-base font-medium bg-white/10 text-white/80 hover:bg-white/20 hover:text-white"
-                    >
-                      Área Restrita
-                    </button>
-                  )}
-              </>
-            )}
+            {renderMobileAuthButtons()}
           </div>
         </div>
       )}
