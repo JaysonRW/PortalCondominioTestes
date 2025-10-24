@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import type { Page } from '../types';
 import { MenuIcon, CloseIcon, LogoutIcon } from './Icons';
@@ -28,7 +29,7 @@ const NavLink: React.FC<{
 
 const Navbar: React.FC<NavbarProps> = ({ activePage, setActivePage }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { session, signOut, profile } = useAuth();
+  const { session, signOut, profile, loading } = useAuth();
 
   const handleNavClick = (page: Page) => {
     setActivePage(page);
@@ -65,30 +66,34 @@ const Navbar: React.FC<NavbarProps> = ({ activePage, setActivePage }) => {
                 </NavLink>
               ))}
 
-              {session && profile?.role === 'sindico' && activePage !== 'acesso-restrito' && (
-                 <button
-                    onClick={() => handleNavClick('acesso-restrito')}
-                    className="ml-4 px-4 py-2 rounded-md text-sm font-medium bg-accent text-primary hover:bg-accent/80 transition-colors duration-300"
-                  >
-                    Voltar para Painel
-                </button>
-              )}
+              {!loading && (
+                <>
+                  {session && profile?.role === 'sindico' && activePage !== 'acesso-restrito' && (
+                    <button
+                        onClick={() => handleNavClick('acesso-restrito')}
+                        className="ml-4 px-4 py-2 rounded-md text-sm font-medium bg-accent text-primary hover:bg-accent/80 transition-colors duration-300"
+                      >
+                        Voltar para Painel
+                    </button>
+                  )}
 
-              {session ? (
-                 <button
-                    onClick={handleSignOut}
-                    className="ml-4 px-4 py-2 flex items-center rounded-md text-sm font-medium bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors duration-300"
-                  >
-                    <LogoutIcon className="w-4 h-4 mr-2" />
-                    Sair
-                  </button>
-              ) : (
-                <button
-                    onClick={() => handleNavClick('acesso-restrito')}
-                    className="ml-4 px-4 py-2 rounded-md text-sm font-medium bg-accent text-primary hover:bg-accent/80 transition-colors duration-300"
-                  >
-                    Área Restrita
-                </button>
+                  {session ? (
+                    <button
+                        onClick={handleSignOut}
+                        className="ml-4 px-4 py-2 flex items-center rounded-md text-sm font-medium bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors duration-300"
+                      >
+                        <LogoutIcon className="w-4 h-4 mr-2" />
+                        Sair
+                      </button>
+                  ) : (
+                    <button
+                        onClick={() => handleNavClick('acesso-restrito')}
+                        className="ml-4 px-4 py-2 rounded-md text-sm font-medium bg-accent text-primary hover:bg-accent/80 transition-colors duration-300"
+                      >
+                        Área Restrita
+                    </button>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -121,30 +126,34 @@ const Navbar: React.FC<NavbarProps> = ({ activePage, setActivePage }) => {
               </button>
             ))}
 
-            {session && profile?.role === 'sindico' && activePage !== 'acesso-restrito' && (
-                <button
-                  onClick={() => handleNavClick('acesso-restrito')}
-                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium bg-accent text-primary"
-                >
-                  Voltar para Painel
-                </button>
-             )}
+            {!loading && (
+              <>
+                {session && profile?.role === 'sindico' && activePage !== 'acesso-restrito' && (
+                    <button
+                      onClick={() => handleNavClick('acesso-restrito')}
+                      className="block w-full text-left px-3 py-2 rounded-md text-base font-medium bg-accent text-primary"
+                    >
+                      Voltar para Painel
+                    </button>
+                )}
 
-             {session ? (
-                 <button
-                    onClick={handleSignOut}
-                    className="block w-full text-left px-3 py-2 rounded-md text-base font-medium bg-red-500/20 text-red-400 hover:bg-red-500/30"
-                  >
-                    Sair
-                  </button>
-              ) : (
-                <button
-                  onClick={() => handleNavClick('acesso-restrito')}
-                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium bg-white/10 text-white/80 hover:bg-white/20 hover:text-white"
-                >
-                  Área Restrita
-                </button>
-              )}
+                {session ? (
+                    <button
+                        onClick={handleSignOut}
+                        className="block w-full text-left px-3 py-2 rounded-md text-base font-medium bg-red-500/20 text-red-400 hover:bg-red-500/30"
+                      >
+                        Sair
+                      </button>
+                  ) : (
+                    <button
+                      onClick={() => handleNavClick('acesso-restrito')}
+                      className="block w-full text-left px-3 py-2 rounded-md text-base font-medium bg-white/10 text-white/80 hover:bg-white/20 hover:text-white"
+                    >
+                      Área Restrita
+                    </button>
+                  )}
+              </>
+            )}
           </div>
         </div>
       )}
