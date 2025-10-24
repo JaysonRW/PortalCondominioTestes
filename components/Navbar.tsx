@@ -29,7 +29,7 @@ const NavLink: React.FC<{
 
 const Navbar: React.FC<NavbarProps> = ({ activePage, setActivePage }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { session, signOut, profile, loading } = useAuth();
+  const { user, signOut, profile, loading } = useAuth();
 
   const handleNavClick = (page: Page) => {
     setActivePage(page);
@@ -55,7 +55,7 @@ const Navbar: React.FC<NavbarProps> = ({ activePage, setActivePage }) => {
       return null; // Don't render anything while checking auth status
     }
 
-    if (session) {
+    if (user) {
       // User is logged in
       return (
         <>
@@ -95,7 +95,7 @@ const Navbar: React.FC<NavbarProps> = ({ activePage, setActivePage }) => {
       return null;
     }
 
-    if (session) {
+    if (user) {
       return (
         <>
           {profile?.role === 'sindico' && activePage !== 'acesso-restrito' && (
