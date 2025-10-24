@@ -9,7 +9,7 @@ interface InicioProps {
 
 const HeroSection: React.FC = () => (
   <div className="relative rounded-lg overflow-hidden h-96 -mt-8 -mx-4 sm:-mx-6 lg:-mx-8">
-    <img src="https://picsum.photos/1600/900?random=1" alt="Condomínio Raio de Sol" className="w-full h-full object-cover"/>
+    <img src="https://i.ibb.co/pB58zdyZ/Image-fx-1.jpg" alt="Condomínio Raio de Sol" className="w-full h-full object-cover"/>
     <div className="absolute inset-0 bg-gradient-to-t from-primary to-transparent"></div>
     <div className="absolute inset-0 bg-primary/50"></div>
     <div className="absolute bottom-0 left-0 p-8 md:p-12">
