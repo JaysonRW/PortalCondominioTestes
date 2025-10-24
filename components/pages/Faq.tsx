@@ -57,7 +57,7 @@ const Faq: React.FC = () => {
             const { data, error } = await supabase
                 .from('faq')
                 .select('*')
-                .order('created_at', { ascending: true });
+                .order('created_at', { ascending: false });
 
             if (error) {
                 console.error("Error fetching FAQ", error);
