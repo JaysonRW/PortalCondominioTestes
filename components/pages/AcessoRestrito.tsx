@@ -3,6 +3,10 @@ import { useAuth } from '../../contexts/AuthContext';
 import { SunIcon } from '../Icons';
 import type { AdminTab } from '../../types';
 import AdminComunicados from '../admin/AdminComunicados';
+import AdminEventos from '../admin/AdminEventos';
+import AdminDocumentos from '../admin/AdminDocumentos';
+import AdminGaleria from '../admin/AdminGaleria';
+import AdminFaq from '../admin/AdminFaq';
 
 const AdminDashboard: React.FC = () => {
     const { profile } = useAuth();
@@ -13,10 +17,13 @@ const AdminDashboard: React.FC = () => {
             case 'comunicados':
                 return <AdminComunicados />;
             case 'eventos':
+                return <AdminEventos />;
             case 'documentos':
+                return <AdminDocumentos />;
             case 'galeria':
+                return <AdminGaleria />;
             case 'faq':
-                return <div className="text-center p-8 bg-white/5 rounded-lg">Em desenvolvimento...</div>;
+                return <AdminFaq />;
             default:
                 return null;
         }
@@ -25,7 +32,7 @@ const AdminDashboard: React.FC = () => {
     const TabButton: React.FC<{tab: AdminTab, label: string}> = ({ tab, label }) => (
         <button
             onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+            className={`px-3 py-2 text-sm font-medium rounded-md transition-colors whitespace-nowrap ${
                 activeTab === tab 
                 ? 'bg-accent text-primary' 
                 : 'text-white/70 hover:bg-white/10'
@@ -43,7 +50,7 @@ const AdminDashboard: React.FC = () => {
                     Bem-vindo(a), <span className="font-bold text-accent">{profile?.full_name}</span>. Gerencie o portal aqui.
                 </p>
             </div>
-            <div className="border-b border-white/10 pb-2 flex space-x-2">
+            <div className="border-b border-white/10 pb-2 flex space-x-2 overflow-x-auto">
                <TabButton tab="comunicados" label="Comunicados" />
                <TabButton tab="eventos" label="Eventos" />
                <TabButton tab="documentos" label="Documentos" />

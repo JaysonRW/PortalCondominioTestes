@@ -1,15 +1,7 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { FaqItem } from '../../types';
 import { ChevronDownIcon } from '../Icons';
-
-const mockFaq: FaqItem[] = [
-  { id: 1, question: 'Como reservar o salão de festas?', answer: 'A reserva do salão de festas deve ser feita através do aplicativo do condomínio ou diretamente na administração com pelo menos 15 dias de antecedência. É necessário verificar a disponibilidade e pagar a taxa de utilização.' },
-  { id: 2, question: 'Quais são os horários de funcionamento da piscina?', answer: 'A piscina funciona de terça a domingo, das 9h às 21h. Às segundas-feiras, ela fica fechada para manutenção. Em feriados, o horário pode ser estendido, consulte os comunicados.' },
-  { id: 3, question: 'Posso ter animais de estimação?', answer: 'Sim, animais de estimação de pequeno e médio porte são permitidos, desde que sigam as regras do regulamento interno, como o uso de coleira nas áreas comuns e a coleta de dejetos.' },
-  { id: 4, question: 'Como funciona a coleta de lixo?', answer: 'A coleta de lixo orgânico ocorre diariamente às 19h. A coleta seletiva (recicláveis) ocorre às terças e quintas, no mesmo horário. Por favor, utilize os contentores corretos.' },
-  { id: 5, question: 'O que fazer em caso de barulho excessivo de um vizinho?', answer: 'O horário de silêncio é das 22h às 8h. Caso haja barulho excessivo, a primeira recomendação é uma conversa amigável com o vizinho. Se persistir, o porteiro pode ser acionado para registrar a ocorrência.' },
-];
+import { supabase } from '../../lib/supabase';
 
 const FaqAccordionItem: React.FC<{ item: FaqItem; isOpen: boolean; onClick: () => void; }> = ({ item, isOpen, onClick }) => (
   <div className="border-b border-white/10">
@@ -56,6 +48,26 @@ const FormSuporte: React.FC = () => (
 
 const Faq: React.FC = () => {
     const [openId, setOpenId] = useState<number | null>(null);
+    const [faqItems, setFaqItems] = useState<FaqItem[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchFaq = async () => {
+            setLoading(true);
+            const { data, error } = await supabase
+                .from('faq')
+                .select('*')
+                .order('created_at', { ascending: true });
+
+            if (error) {
+                console.error("Error fetching FAQ", error);
+            } else {
+                setFaqItems(data as FaqItem[]);
+            }
+            setLoading(false);
+        };
+        fetchFaq();
+    }, []);
 
     const handleToggle = (id: number) => {
         setOpenId(openId === id ? null : id);
@@ -70,14 +82,15 @@ const Faq: React.FC = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
                 <div className="lg:col-span-3 bg-white/5 border border-white/10 rounded-lg p-6">
-                    {mockFaq.map(item => (
+                    {loading ? <p className="text-white/70">Carregando perguntas...</p> : 
+                    faqItems.length > 0 ? faqItems.map(item => (
                         <FaqAccordionItem
                             key={item.id}
                             item={item}
                             isOpen={openId === item.id}
                             onClick={() => handleToggle(item.id)}
                         />
-                    ))}
+                    )) : <p className="text-white/70 text-center py-4">Nenhuma pergunta frequente cadastrada.</p>}
                 </div>
                 <div className="lg:col-span-2">
                     <FormSuporte />

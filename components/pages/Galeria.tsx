@@ -1,18 +1,37 @@
-
-import React from 'react';
-
-const images = [
-  { id: 1, src: 'https://picsum.photos/800/600?random=10', alt: 'Evento no condomínio' },
-  { id: 2, src: 'https://picsum.photos/800/600?random=11', alt: 'Área da piscina' },
-  { id: 3, src: 'https://picsum.photos/800/600?random=12', alt: 'Jardim florido' },
-  { id: 4, src: 'https://picsum.photos/800/600?random=13', alt: 'Salão de festas decorado' },
-  { id: 5, src: 'https://picsum.photos/800/600?random=14', alt: 'Vista aérea do condomínio' },
-  { id: 6, src: 'https://picsum.photos/800/600?random=15', alt: 'Playground infantil' },
-  { id: 7, src: 'https://picsum.photos/800/600?random=16', alt: 'Academia equipada' },
-  { id: 8, src: 'https://picsum.photos/800/600?random=17', alt: 'Decoração de Natal' },
-];
+import React, { useState, useEffect } from 'react';
+import { supabase } from '../../lib/supabase';
+import type { GaleriaItem } from '../../types';
 
 const Galeria: React.FC = () => {
+  const [images, setImages] = useState<GaleriaItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('galeria')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error("Error fetching gallery images", error);
+      } else if (data) {
+        const itemsWithUrls = data.map(item => {
+          const { data: { publicUrl } } = supabase
+            .storage
+            .from('galeria')
+            .getPublicUrl(item.image_path);
+          return { ...item, url: publicUrl };
+        });
+        setImages(itemsWithUrls as GaleriaItem[]);
+      }
+      setLoading(false);
+    };
+
+    fetchImages();
+  }, []);
+
   return (
     <div className="space-y-8">
       <div>
@@ -20,20 +39,27 @@ const Galeria: React.FC = () => {
         <p className="mt-2 text-white/70">Relembre os melhores momentos e conheça os espaços do nosso condomínio.</p>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {images.map((image) => (
-          <div key={image.id} className="group relative overflow-hidden rounded-lg">
-            <img 
-              src={image.src} 
-              alt={image.alt} 
-              className="w-full h-64 object-cover transform group-hover:scale-110 transition-transform duration-500"
-            />
-            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-              <p className="text-white text-sm font-semibold">{image.alt}</p>
+      {loading ? <p className="text-white/70 text-center">Carregando imagens...</p> :
+      images.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {images.map((image) => (
+            <div key={image.id} className="group relative overflow-hidden rounded-lg">
+              <img 
+                src={image.url} 
+                alt={image.alt_text} 
+                className="w-full h-64 object-cover transform group-hover:scale-110 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                <p className="text-white text-sm font-semibold">{image.alt_text}</p>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-16 bg-white/5 rounded-lg">
+          <p className="text-white/70">Nenhuma imagem na galeria ainda.</p>
+        </div>
+      )}
     </div>
   );
 };
