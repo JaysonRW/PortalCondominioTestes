@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
@@ -17,14 +18,14 @@ const AdminComunicados: React.FC = () => {
         setLoading(true);
         const { data, error } = await supabase
             .from('comunicados')
-            .select('*, profiles(full_name)')
-            .order('created_at', { ascending: false });
+            .select('*, profiles(full_name)');
 
         if (error) {
             console.error(error);
             setError('Falha ao carregar comunicados.');
-        } else {
-            setComunicados(data as Comunicado[]);
+        } else if (data) {
+            const sortedData = (data as Comunicado[]).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+            setComunicados(sortedData);
         }
         setLoading(false);
     }, []);

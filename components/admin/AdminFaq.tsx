@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import type { FaqItem } from '../../types';
@@ -15,13 +16,13 @@ const AdminFaq: React.FC = () => {
         setLoading(true);
         const { data, error } = await supabase
             .from('faq_items')
-            .select('*')
-            .order('created_at', { ascending: false });
+            .select('*');
 
         if (error) {
             setError('Falha ao carregar FAQ.');
-        } else {
-            setFaqItems(data as FaqItem[]);
+        } else if (data) {
+            const sortedData = (data as FaqItem[]).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+            setFaqItems(sortedData);
         }
         setLoading(false);
     }, []);

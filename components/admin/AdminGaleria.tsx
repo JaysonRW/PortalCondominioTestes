@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import type { GaleriaItem } from '../../types';
@@ -17,13 +18,13 @@ const AdminGaleria: React.FC = () => {
         setLoading(true);
         const { data, error } = await supabase
             .from('galeria_imagens')
-            .select('*')
-            .order('created_at', { ascending: false });
+            .select('*');
 
         if (error) {
             setError('Falha ao carregar imagens.');
         } else if (data) {
-            const itemsWithUrls = data.map(item => {
+            const sortedData = (data as GaleriaItem[]).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+            const itemsWithUrls = sortedData.map(item => {
                 const { data: { publicUrl } } = supabase.storage.from('galeria').getPublicUrl(item.image_path);
                 return { ...item, url: publicUrl };
             });

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import type { FaqItem } from '../../types';
 import { ChevronDownIcon } from '../Icons';
@@ -56,13 +57,13 @@ const Faq: React.FC = () => {
             setLoading(true);
             const { data, error } = await supabase
                 .from('faq_items')
-                .select('*')
-                .order('created_at', { ascending: false });
+                .select('*');
 
             if (error) {
                 console.error("Error fetching FAQ", error);
-            } else {
-                setFaqItems(data as FaqItem[]);
+            } else if (data) {
+                const sortedData = (data as FaqItem[]).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+                setFaqItems(sortedData);
             }
             setLoading(false);
         };

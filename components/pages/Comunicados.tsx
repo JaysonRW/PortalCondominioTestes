@@ -28,14 +28,14 @@ const Comunicados: React.FC = () => {
       setLoading(true);
       const { data, error } = await supabase
         .from('comunicados')
-        .select('*, profiles(full_name)')
-        .order('created_at', { ascending: false });
+        .select('*, profiles(full_name)');
 
       if (error) {
         console.error('Error fetching comunicados:', error);
         setError('Não foi possível carregar os comunicados.');
       } else if (data) {
-        setComunicados(data as Comunicado[]);
+        const sortedData = (data as Comunicado[]).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        setComunicados(sortedData);
       }
       setLoading(false);
     };
