@@ -29,18 +29,18 @@ const Eventos: React.FC = () => {
 
     const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
     const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
-    const monthName = currentDate.toLocaleString('pt-BR', { month: 'long' });
+    const monthName = currentDate.toLocaleString('pt-BR', { month: 'long', timeZone: 'UTC' });
     const year = currentDate.getFullYear();
 
     const eventosNoMes = useMemo(() => 
         eventos.filter(e => {
             const eventDate = new Date(e.date);
-            return eventDate.getMonth() === currentDate.getMonth() && eventDate.getFullYear() === currentDate.getFullYear();
+            return eventDate.getUTCMonth() === currentDate.getUTCMonth() && eventDate.getUTCFullYear() === currentDate.getUTCFullYear();
         }), 
     [eventos, currentDate]);
     
     const proximosEventos = useMemo(() =>
-        eventos.filter(e => new Date(e.date) >= new Date()).slice(0, 5),
+        eventos.filter(e => new Date(e.date) >= new Date(new Date().toDateString())).slice(0, 5),
     [eventos]);
 
     const changeMonth = (offset: number) => {
@@ -49,11 +49,16 @@ const Eventos: React.FC = () => {
 
     const calendarDays = Array.from({ length: firstDayOfMonth }, (_, i) => <div key={`empty-${i}`} className="border-r border-b border-white/10"></div>);
     for (let day = 1; day <= daysInMonth; day++) {
-        const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-        const hasEvent = eventosNoMes.some(e => new Date(e.date).toDateString() === date.toDateString());
+        const date = new Date(Date.UTC(currentDate.getFullYear(), currentDate.getMonth(), day));
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        
+        const isToday = date.getTime() === today.getTime();
+        const hasEvent = eventosNoMes.some(e => new Date(e.date).getUTCDate() === day);
+
         calendarDays.push(
             <div key={day} className={`p-2 border-r border-b border-white/10 h-24 flex flex-col ${hasEvent ? 'bg-accent/10' : ''}`}>
-                <span className={`font-bold ${new Date().toDateString() === date.toDateString() ? 'text-accent' : 'text-white/80'}`}>{day}</span>
+                <span className={`font-bold ${isToday ? 'text-accent' : 'text-white/80'}`}>{day}</span>
                 {hasEvent && <div className="mt-auto self-center w-2 h-2 bg-accent rounded-full mb-1"></div>}
             </div>
         );
@@ -94,7 +99,7 @@ const Eventos: React.FC = () => {
                                     <div className="flex items-center">
                                         <div className="flex flex-col items-center justify-center bg-accent text-primary p-2 rounded-md w-16 h-16 mr-4">
                                             <span className="text-2xl font-bold leading-none">{eventDate.getUTCDate()}</span>
-                                            <span className="text-xs font-semibold uppercase">{eventDate.toLocaleString('pt-BR', { month: 'short' })}</span>
+                                            <span className="text-xs font-semibold uppercase">{eventDate.toLocaleString('pt-BR', { month: 'short', timeZone: 'UTC' })}</span>
                                         </div>
                                         <div>
                                             <h4 className="font-bold text-white">{evento.title}</h4>
