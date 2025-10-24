@@ -19,7 +19,7 @@ const Eventos: React.FC = () => {
             if (error) {
                 console.error("Error fetching eventos", error);
             } else if (data) {
-                const sortedData = (data as Evento[]).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+                const sortedData = (data as Evento[]).sort((a, b) => new Date(a.event_date).getTime() - new Date(b.event_date).getTime());
                 setEventos(sortedData);
             }
             setLoading(false);
@@ -34,13 +34,13 @@ const Eventos: React.FC = () => {
 
     const eventosNoMes = useMemo(() => 
         eventos.filter(e => {
-            const eventDate = new Date(e.date);
+            const eventDate = new Date(e.event_date);
             return eventDate.getUTCMonth() === currentDate.getUTCMonth() && eventDate.getUTCFullYear() === currentDate.getUTCFullYear();
         }), 
     [eventos, currentDate]);
     
     const proximosEventos = useMemo(() =>
-        eventos.filter(e => new Date(e.date) >= new Date(new Date().toDateString())).slice(0, 5),
+        eventos.filter(e => new Date(e.event_date) >= new Date(new Date().toDateString())).slice(0, 5),
     [eventos]);
 
     const changeMonth = (offset: number) => {
@@ -54,7 +54,7 @@ const Eventos: React.FC = () => {
         today.setHours(0,0,0,0);
         
         const isToday = date.getTime() === today.getTime();
-        const hasEvent = eventosNoMes.some(e => new Date(e.date).getUTCDate() === day);
+        const hasEvent = eventosNoMes.some(e => new Date(e.event_date).getUTCDate() === day);
 
         calendarDays.push(
             <div key={day} className={`p-2 border-r border-b border-white/10 h-24 flex flex-col ${hasEvent ? 'bg-accent/10' : ''}`}>
@@ -93,7 +93,7 @@ const Eventos: React.FC = () => {
                     <div className="space-y-4">
                         {loading ? <p className="text-white/70">Carregando eventos...</p> : 
                          proximosEventos.length > 0 ? proximosEventos.map(evento => {
-                            const eventDate = new Date(evento.date);
+                            const eventDate = new Date(evento.event_date);
                             return (
                                 <div key={evento.id} className="bg-white/5 p-4 rounded-lg border border-transparent hover:border-accent/50 transition-colors duration-300">
                                     <div className="flex items-center">

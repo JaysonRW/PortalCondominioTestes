@@ -9,7 +9,7 @@ const AdminEventos: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingEvento, setEditingEvento] = useState<Evento | null>(null);
-    const [formState, setFormState] = useState({ title: '', date: '', location: '', description: '' });
+    const [formState, setFormState] = useState({ title: '', event_date: '', location: '', description: '' });
 
     const fetchEventos = useCallback(async () => {
         setLoading(true);
@@ -21,7 +21,7 @@ const AdminEventos: React.FC = () => {
             console.error("Error fetching eventos:", error);
             setError('Falha ao carregar eventos.');
         } else if (data) {
-            const sortedData = (data as Evento[]).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+            const sortedData = (data as Evento[]).sort((a, b) => new Date(b.event_date).getTime() - new Date(a.event_date).getTime());
             setEventos(sortedData);
         }
         setLoading(false);
@@ -33,8 +33,8 @@ const AdminEventos: React.FC = () => {
 
     const handleOpenModal = (evento: Evento | null = null) => {
         setEditingEvento(evento);
-        const eventDate = evento ? new Date(evento.date).toISOString().split('T')[0] : '';
-        setFormState(evento ? { ...evento, date: eventDate } : { title: '', date: '', location: '', description: '' });
+        const eventDate = evento ? new Date(evento.event_date).toISOString().split('T')[0] : '';
+        setFormState(evento ? { ...evento, event_date: eventDate } : { title: '', event_date: '', location: '', description: '' });
         setError(null);
         setIsModalOpen(true);
     };
@@ -47,11 +47,18 @@ const AdminEventos: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        const eventoData = {
+            title: formState.title,
+            event_date: formState.event_date,
+            location: formState.location,
+            description: formState.description,
+        };
+
         let response;
         if (editingEvento) {
-            response = await supabase.from('eventos').update(formState).eq('id', editingEvento.id);
+            response = await supabase.from('eventos').update(eventoData).eq('id', editingEvento.id);
         } else {
-            response = await supabase.from('eventos').insert(formState);
+            response = await supabase.from('eventos').insert(eventoData);
         }
 
         if (response.error) {
@@ -96,7 +103,7 @@ const AdminEventos: React.FC = () => {
                         {eventos.map(evento => (
                             <tr key={evento.id} className="border-b border-white/10 hover:bg-white/5">
                                 <td className="p-3 font-semibold">{evento.title}</td>
-                                <td className="p-3 hidden md:table-cell text-sm text-white/70">{new Date(evento.date).toLocaleDateString('pt-BR', {timeZone: 'UTC'})}</td>
+                                <td className="p-3 hidden md:table-cell text-sm text-white/70">{new Date(evento.event_date).toLocaleDateString('pt-BR', {timeZone: 'UTC'})}</td>
                                 <td className="p-3 hidden sm:table-cell">{evento.location}</td>
                                 <td className="p-3 text-right">
                                     <button onClick={() => handleOpenModal(evento)} className="p-2 text-white/70 hover:text-accent"><PencilIcon className="w-5 h-5"/></button>
@@ -121,8 +128,8 @@ const AdminEventos: React.FC = () => {
                                     <input id="title" type="text" value={formState.title} onChange={e => setFormState({...formState, title: e.target.value})} className="mt-1 w-full bg-white/10 border border-white/20 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-accent" required />
                                 </div>
                                 <div>
-                                    <label htmlFor="date" className="block text-sm font-medium text-white/80">Data</label>
-                                    <input id="date" type="date" value={formState.date} onChange={e => setFormState({...formState, date: e.target.value})} className="mt-1 w-full bg-white/10 border border-white/20 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-accent" required />
+                                    <label htmlFor="event_date" className="block text-sm font-medium text-white/80">Data</label>
+                                    <input id="event_date" type="date" value={formState.event_date} onChange={e => setFormState({...formState, event_date: e.target.value})} className="mt-1 w-full bg-white/10 border border-white/20 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-accent" required />
                                 </div>
                             </div>
                              <div>

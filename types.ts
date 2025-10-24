@@ -18,7 +18,7 @@ export interface Comunicado {
 export interface Evento {
   id: number;
   title: string;
-  date: string;
+  event_date: string;
   description: string;
   location: string;
   created_at: string;
