@@ -28,7 +28,7 @@ const NavLink: React.FC<{
 
 const Navbar: React.FC<NavbarProps> = ({ activePage, setActivePage }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { session, signOut } = useAuth();
+  const { session, signOut, profile } = useAuth();
 
   const handleNavClick = (page: Page) => {
     setActivePage(page);
@@ -64,6 +64,16 @@ const Navbar: React.FC<NavbarProps> = ({ activePage, setActivePage }) => {
                   {item.label}
                 </NavLink>
               ))}
+
+              {session && profile?.role === 'sindico' && activePage !== 'acesso-restrito' && (
+                 <button
+                    onClick={() => handleNavClick('acesso-restrito')}
+                    className="ml-4 px-4 py-2 rounded-md text-sm font-medium bg-accent text-primary hover:bg-accent/80 transition-colors duration-300"
+                  >
+                    Voltar para Painel
+                </button>
+              )}
+
               {session ? (
                  <button
                     onClick={handleSignOut}
@@ -110,6 +120,16 @@ const Navbar: React.FC<NavbarProps> = ({ activePage, setActivePage }) => {
                 {item.label}
               </button>
             ))}
+
+            {session && profile?.role === 'sindico' && activePage !== 'acesso-restrito' && (
+                <button
+                  onClick={() => handleNavClick('acesso-restrito')}
+                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium bg-accent text-primary"
+                >
+                  Voltar para Painel
+                </button>
+             )}
+
              {session ? (
                  <button
                     onClick={handleSignOut}
