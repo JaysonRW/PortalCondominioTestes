@@ -14,7 +14,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 const AppContent: React.FC = () => {
   const [activePage, setActivePage] = useState<Page>('inicio');
   const [isLoading, setIsLoading] = useState(true);
-  const { session, loading: authLoading, profile } = useAuth();
+  const { session, loading: authLoading } = useAuth();
 
   useEffect(() => {
     if (!authLoading) {
@@ -24,6 +24,14 @@ const AppContent: React.FC = () => {
       return () => clearTimeout(timer);
     }
   }, [authLoading]);
+
+  useEffect(() => {
+    // If the user successfully logs in while on the login page,
+    // redirect them to the restricted area.
+    if (session && activePage === 'login') {
+      setActivePage('acesso-restrito');
+    }
+  }, [session, activePage]);
 
   const handleSetPage = (page: Page) => {
     if (page === 'acesso-restrito' && !session) {

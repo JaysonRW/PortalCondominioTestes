@@ -7,6 +7,7 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
+  const [secretCode, setSecretCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -35,6 +36,7 @@ const Login: React.FC = () => {
         data: {
           fullName,
           whatsapp,
+          secretCode,
         },
       },
     });
@@ -86,6 +88,16 @@ const Login: React.FC = () => {
                   onChange={(e) => setWhatsapp(e.target.value)}
                   required
                   placeholder="(XX) XXXXX-XXXX"
+                  className="w-full bg-white/10 border border-white/20 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-accent"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-bold text-white/80 block mb-1">Código de Acesso (Opcional)</label>
+                <input
+                  type="text"
+                  value={secretCode}
+                  onChange={(e) => setSecretCode(e.target.value)}
+                  placeholder="Insira o código de síndico"
                   className="w-full bg-white/10 border border-white/20 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-accent"
                 />
               </div>
