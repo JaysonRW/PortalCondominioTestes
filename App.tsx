@@ -56,16 +56,6 @@ const AppContent: React.FC = () => {
     }
   };
   
-  if (authLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-primary text-accent">
-        <img src="https://i.ibb.co/FkhJ24JQ/Logos-teste-condominio.png" alt="Logo Raio de Sol" className="w-32 h-auto" />
-        <h1 className="mt-4 text-2xl font-bold tracking-wider">Condomínio Raio de Sol</h1>
-        <p className="text-white/70">Carregando portal...</p>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-primary text-white font-sans flex flex-col">
       <Navbar activePage={activePage} setActivePage={handleSetPage} />
