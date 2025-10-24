@@ -13,15 +13,15 @@ const Documentos: React.FC = () => {
         setError(null);
         const { data, error } = await supabase
             .from('documentos')
-            .select('*')
-            .order('created_at', { ascending: false });
+            .select('*');
 
         if (error) {
             console.error('Error fetching documents:', error);
             setError('Não foi possível carregar os documentos.');
             setDocumentos([]);
         } else if (data) {
-            const documentsWithUrls = data.map(doc => {
+            const sortedData = (data as Documento[]).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+            const documentsWithUrls = sortedData.map(doc => {
                 const { data: { publicUrl } } = supabase
                     .storage
                     .from('documentos')

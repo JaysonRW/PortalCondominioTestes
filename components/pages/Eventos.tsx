@@ -14,13 +14,13 @@ const Eventos: React.FC = () => {
             setLoading(true);
             const { data, error } = await supabase
                 .from('eventos')
-                .select('*')
-                .order('date', { ascending: true });
+                .select('*');
             
             if (error) {
                 console.error("Error fetching eventos", error);
-            } else {
-                setEventos(data as Evento[]);
+            } else if (data) {
+                const sortedData = (data as Evento[]).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+                setEventos(sortedData);
             }
             setLoading(false);
         };

@@ -15,13 +15,14 @@ const AdminEventos: React.FC = () => {
         setLoading(true);
         const { data, error } = await supabase
             .from('eventos')
-            .select('*')
-            .order('date', { ascending: false });
+            .select('*');
 
         if (error) {
+            console.error("Error fetching eventos:", error);
             setError('Falha ao carregar eventos.');
-        } else {
-            setEventos(data as Evento[]);
+        } else if (data) {
+            const sortedData = (data as Evento[]).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+            setEventos(sortedData);
         }
         setLoading(false);
     }, []);
