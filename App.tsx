@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import type { Page } from './types';
 import Navbar from './components/Navbar';
@@ -13,17 +14,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 const AppContent: React.FC = () => {
   const [activePage, setActivePage] = useState<Page>('inicio');
-  const [isLoading, setIsLoading] = useState(true);
   const { session, loading: authLoading } = useAuth();
-
-  useEffect(() => {
-    if (!authLoading) {
-      const timer = setTimeout(() => {
-        setIsLoading(false);
-      }, 1500);
-      return () => clearTimeout(timer);
-    }
-  }, [authLoading]);
 
   useEffect(() => {
     // If the user successfully logs in while on the login page,
@@ -65,7 +56,7 @@ const AppContent: React.FC = () => {
     }
   };
   
-  if (isLoading || authLoading) {
+  if (authLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-primary text-accent">
         <img src="https://i.ibb.co/FkhJ24JQ/Logos-teste-condominio.png" alt="Logo Raio de Sol" className="w-32 h-auto" />
