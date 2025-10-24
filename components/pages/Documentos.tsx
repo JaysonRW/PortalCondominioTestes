@@ -20,7 +20,7 @@ const Documentos: React.FC = () => {
             setError('Não foi possível carregar os documentos.');
             setDocumentos([]);
         } else if (data) {
-            const sortedData = (data as Documento[]).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+            const sortedData = (data as Documento[]).sort((a, b) => new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime());
             const documentsWithUrls = sortedData.map(doc => {
                 const { data: { publicUrl } } = supabase
                     .storage
@@ -57,7 +57,7 @@ const Documentos: React.FC = () => {
                         <div className="overflow-hidden">
                             <p className="font-semibold text-white truncate">{doc.name}</p>
                             <p className="text-xs text-white/60">
-                                {new Date(doc.created_at).toLocaleDateString('pt-BR')} - {doc.file_size_kb} KB
+                                {new Date(doc.uploaded_at).toLocaleDateString('pt-BR')} - {doc.file_size_kb ? `${doc.file_size_kb} KB` : 'N/A'}
                             </p>
                         </div>
                     </div>

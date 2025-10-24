@@ -26,7 +26,7 @@ const AdminDocumentos: React.FC = () => {
             setError('Não foi possível carregar os documentos.');
             setDocumentos([]);
         } else if (data) {
-             const sortedData = (data as Documento[]).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+             const sortedData = (data as Documento[]).sort((a, b) => new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime());
              const documentsWithUrls = sortedData.map(doc => {
                 const { data: { publicUrl } } = supabase
                     .storage
@@ -92,7 +92,7 @@ const AdminDocumentos: React.FC = () => {
                 name: formName,
                 file_path: filePath,
                 file_size_kb: Math.round(selectedFile.size / 1024),
-                uploader_id: profile.id
+                uploaded_by: profile.id,
             });
             
         if (insertError) {
@@ -141,8 +141,8 @@ const AdminDocumentos: React.FC = () => {
                         {documentos.map(doc => (
                             <tr key={doc.id} className="border-b border-white/10 hover:bg-white/5">
                                 <td className="p-3 font-semibold">{doc.name}</td>
-                                <td className="p-3 hidden md:table-cell text-sm text-white/70">{new Date(doc.created_at).toLocaleDateString('pt-BR')}</td>
-                                <td className="p-3 hidden sm:table-cell text-sm text-white/70">{doc.file_size_kb} KB</td>
+                                <td className="p-3 hidden md:table-cell text-sm text-white/70">{new Date(doc.uploaded_at).toLocaleDateString('pt-BR')}</td>
+                                <td className="p-3 hidden sm:table-cell text-sm text-white/70">{doc.file_size_kb ? `${doc.file_size_kb} KB` : '-'}</td>
                                 <td className="p-3 text-right">
                                     <a href={doc.url} download={doc.name} target="_blank" rel="noopener noreferrer" className="p-2 inline-block text-white/70 hover:text-accent"><DownloadIcon className="w-5 h-5"/></a>
                                     <button onClick={() => handleDelete(doc)} className="p-2 text-white/70 hover:text-red-500"><TrashIcon className="w-5 h-5"/></button>

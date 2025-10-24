@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../contexts/AuthContext';
 import type { Evento } from '../../types';
 import { PlusIcon, PencilIcon, TrashIcon, CloseIcon } from '../Icons';
 
 const AdminEventos: React.FC = () => {
+    const { user } = useAuth();
     const [eventos, setEventos] = useState<Evento[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -47,6 +49,11 @@ const AdminEventos: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        if (!user) {
+            setError("Você precisa estar logado para realizar esta ação.");
+            return;
+        }
+
         const eventoData = {
             title: formState.title,
             event_date: formState.event_date,
@@ -58,7 +65,7 @@ const AdminEventos: React.FC = () => {
         if (editingEvento) {
             response = await supabase.from('eventos').update(eventoData).eq('id', editingEvento.id);
         } else {
-            response = await supabase.from('eventos').insert(eventoData);
+            response = await supabase.from('eventos').insert({ ...eventoData, created_by: user.id });
         }
 
         if (response.error) {

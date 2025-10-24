@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import type { GaleriaItem } from '../../types';
@@ -17,7 +16,7 @@ const Galeria: React.FC = () => {
       if (error) {
         console.error("Error fetching gallery images", error);
       } else if (data) {
-        const sortedData = (data as GaleriaItem[]).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        const sortedData = (data as GaleriaItem[]).sort((a, b) => new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime());
         const itemsWithUrls = sortedData.map(item => {
           const { data: { publicUrl } } = supabase
             .storage

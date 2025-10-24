@@ -22,15 +22,16 @@ export interface Evento {
   description: string;
   location: string;
   created_at: string;
+  created_by?: string;
 }
 
 export interface Documento {
   id: number;
   name: string;
-  created_at: string;
-  file_size_kb: number;
+  uploaded_at: string;
+  file_size_kb: number | null;
   file_path: string;
-  uploader_id?: string;
+  uploaded_by: string;
   url?: string;
 }
 
@@ -45,7 +46,8 @@ export interface GaleriaItem {
   id: number;
   alt_text: string;
   image_path: string;
-  created_at: string;
+  uploaded_at: string;
+  uploaded_by: string;
   url?: string;
 }
 

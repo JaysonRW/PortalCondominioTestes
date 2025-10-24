@@ -1,10 +1,11 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../contexts/AuthContext';
 import type { GaleriaItem } from '../../types';
 import { PlusIcon, TrashIcon, CloseIcon, UploadIcon } from '../Icons';
 
 const AdminGaleria: React.FC = () => {
+    const { profile } = useAuth();
     const [images, setImages] = useState<GaleriaItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -23,7 +24,7 @@ const AdminGaleria: React.FC = () => {
         if (error) {
             setError('Falha ao carregar imagens.');
         } else if (data) {
-            const sortedData = (data as GaleriaItem[]).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+            const sortedData = (data as GaleriaItem[]).sort((a, b) => new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime());
             const itemsWithUrls = sortedData.map(item => {
                 const { data: { publicUrl } } = supabase.storage.from('galeria').getPublicUrl(item.image_path);
                 return { ...item, url: publicUrl };
@@ -59,7 +60,7 @@ const AdminGaleria: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!selectedFile || !altText) return;
+        if (!selectedFile || !altText || !profile) return;
         
         setUploading(true);
         setError(null);
@@ -75,7 +76,11 @@ const AdminGaleria: React.FC = () => {
             return;
         }
 
-        const { error: insertError } = await supabase.from('galeria_imagens').insert({ alt_text: altText, image_path: filePath });
+        const { error: insertError } = await supabase.from('galeria_imagens').insert({ 
+            alt_text: altText, 
+            image_path: filePath,
+            uploaded_by: profile.id
+        });
             
         if (insertError) {
             setError(`Falha ao salvar registro: ${insertError.message}`);
