@@ -14,7 +14,7 @@ const AdminFaq: React.FC = () => {
     const fetchFaq = useCallback(async () => {
         setLoading(true);
         const { data, error } = await supabase
-            .from('faq')
+            .from('faq_items')
             .select('*')
             .order('created_at', { ascending: false });
 
@@ -47,9 +47,9 @@ const AdminFaq: React.FC = () => {
         
         let response;
         if (editingFaq) {
-            response = await supabase.from('faq').update(formState).eq('id', editingFaq.id);
+            response = await supabase.from('faq_items').update(formState).eq('id', editingFaq.id);
         } else {
-            response = await supabase.from('faq').insert(formState);
+            response = await supabase.from('faq_items').insert(formState);
         }
 
         if (response.error) {
@@ -62,7 +62,7 @@ const AdminFaq: React.FC = () => {
 
     const handleDelete = async (id: number) => {
         if (window.confirm('Tem certeza que deseja excluir esta pergunta?')) {
-            await supabase.from('faq').delete().eq('id', id);
+            await supabase.from('faq_items').delete().eq('id', id);
             await fetchFaq();
         }
     };

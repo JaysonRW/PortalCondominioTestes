@@ -16,7 +16,7 @@ const AdminGaleria: React.FC = () => {
     const fetchImages = useCallback(async () => {
         setLoading(true);
         const { data, error } = await supabase
-            .from('galeria')
+            .from('galeria_imagens')
             .select('*')
             .order('created_at', { ascending: false });
 
@@ -74,7 +74,7 @@ const AdminGaleria: React.FC = () => {
             return;
         }
 
-        const { error: insertError } = await supabase.from('galeria').insert({ alt_text: altText, image_path: filePath });
+        const { error: insertError } = await supabase.from('galeria_imagens').insert({ alt_text: altText, image_path: filePath });
             
         if (insertError) {
             setError(`Falha ao salvar registro: ${insertError.message}`);
@@ -89,7 +89,7 @@ const AdminGaleria: React.FC = () => {
     const handleDelete = async (image: GaleriaItem) => {
         if (!window.confirm(`Tem certeza que deseja excluir esta imagem?`)) return;
         await supabase.storage.from('galeria').remove([image.image_path]);
-        await supabase.from('galeria').delete().eq('id', image.id);
+        await supabase.from('galeria_imagens').delete().eq('id', image.id);
         await fetchImages();
     };
 

@@ -10,7 +10,7 @@ const Galeria: React.FC = () => {
     const fetchImages = async () => {
       setLoading(true);
       const { data, error } = await supabase
-        .from('galeria')
+        .from('galeria_imagens')
         .select('*')
         .order('created_at', { ascending: false });
 

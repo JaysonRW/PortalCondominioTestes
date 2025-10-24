@@ -55,7 +55,7 @@ const Faq: React.FC = () => {
         const fetchFaq = async () => {
             setLoading(true);
             const { data, error } = await supabase
-                .from('faq')
+                .from('faq_items')
                 .select('*')
                 .order('created_at', { ascending: false });
 
